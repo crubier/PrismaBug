@@ -78,7 +78,7 @@ async function generateTempNodeFiles(tempNodeFolderPath = "./temp/NDF/nodes") {
       map(nodeNumber => {
         const id = cuid();
         nodes.values.push({
-          _typeName: "Mission",
+          _typeName: "MissionExecution",
           id: id,
           createdAt: moment(),
           updatedAt: moment()
