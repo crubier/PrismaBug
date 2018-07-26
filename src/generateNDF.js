@@ -5,16 +5,24 @@ const cuid = require("cuid");
 const moment = require("moment");
 const AdmZip = require("adm-zip");
 
-async function generateTempNDFFolder(tempFilePath = "./temp/NDF") {
-  await fs.remove(tempFilePath);
+/**
+ * Create the temp folders required for the ndf zip file creation
+ * @param  {String} [tempNdfFolderPath="./temp/NDF"] the path of the folder
+ */
+async function createTempNDFFolder(tempNdfFolderPath = "./temp/NDF") {
+  await fs.remove(tempNdfFolderPath);
 
-  await fs.ensureDir(tempFilePath);
+  await fs.ensureDir(tempNdfFolderPath);
 
-  await fs.ensureDir(path.join(tempFilePath, "lists"));
-  await fs.ensureDir(path.join(tempFilePath, "nodes"));
-  await fs.ensureDir(path.join(tempFilePath, "relations"));
+  await fs.ensureDir(path.join(tempNdfFolderPath, "lists"));
+  await fs.ensureDir(path.join(tempNdfFolderPath, "nodes"));
+  await fs.ensureDir(path.join(tempNdfFolderPath, "relations"));
 }
 
+/**
+ * Generate the lists file
+ * @param  {String} [tempListFilePath="./temp/NDF/lists/000001.json"] path of the lists file
+ */
 async function generateTempListFile(
   tempListFilePath = "./temp/NDF/lists/000001.json"
 ) {
@@ -23,6 +31,11 @@ async function generateTempListFile(
   await fs.writeJson(tempListFilePath, { valueType: "lists", values: [] });
 }
 
+/**
+ * Append the required number of 0 and the json extension to the file number
+ * @param  {[type]} fileNumber number of the file
+ * @return {String}            name of the file
+ */
 function generateFileName(fileNumber) {
   switch (fileNumber.toString().length) {
     case 6:
@@ -42,6 +55,12 @@ function generateFileName(fileNumber) {
   }
 }
 
+/**
+ * Generate all the nodes files
+ * @param  {String} [tempNodeFolderPath="./temp/NDF/nodes"] path of the nodes folder
+ * @return {{missionIds: String[], imageIds: String[]}}     object containing arrays of mission and image ids
+
+ */
 async function generateTempNodeFiles(tempNodeFolderPath = "./temp/NDF/nodes") {
   const missionIds = [];
   const imageIds = [];
@@ -98,6 +117,12 @@ async function generateTempNodeFiles(tempNodeFolderPath = "./temp/NDF/nodes") {
   return { missionIds, imageIds };
 }
 
+/**
+ * Genere all the relations files
+ * @param  {number[]} missionIds                                    array containing the mission ids
+ * @param  {number[]} imageIds                                      array containing the image ids
+ * @param  {String} [tempRelationFolderPath="./temp/NDF/relations"] path to the relation folder
+ */
 async function generateTempRelationFiles(
   missionIds,
   imageIds,
@@ -132,10 +157,18 @@ async function generateTempRelationFiles(
   );
 }
 
-async function zipFile(tempNdfFolder = "./temp/NDF", writePath = "./ndf.zip") {
+/**
+ * Zip the ndf folder into a zip file
+ * @param  {String} [tempNdfFolderPath="./temp/NDF"] path of the ndf folder
+ * @param  {String} [writePath="./ndf.zip"]          path where the zip file will be created
+ */
+async function zipFile(
+  tempNdfFolderPath = "./temp/NDF",
+  writePath = "./ndf.zip"
+) {
   const zip = new AdmZip();
 
-  zip.addLocalFolder(tempNdfFolder);
+  zip.addLocalFolder(tempNdfFolderPath);
 
   await fs.remove(writePath);
 
@@ -147,7 +180,7 @@ async function main() {
     console.log("Generating NDF zip file :");
     console.log("Create temporary folder");
 
-    await generateTempNDFFolder();
+    await createTempNDFFolder();
 
     console.log("Generating list file");
 
