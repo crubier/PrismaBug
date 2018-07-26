@@ -1,4 +1,13 @@
-type User {
+type MissionExecution {
   id: ID! @unique
-  name: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  images: [Image!]! @relation(name: "MissionImages")
+}
+
+type Image {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  mission: MissionExecution @relation(name: "MissionImages")
 }
