@@ -141,18 +141,20 @@ async function generateTempRelationFiles(
         missionNumber * 20 + 19
       );
       const relations = { valueType: "relations", values: [] };
-      map(image => {
-        relations.values.push([
-          {
-            _typeName: "MissionExecution",
-            id: missionIds[missionNumber],
-            fieldName: "images"
-          },
-          { _typeName: "Image", id: image, fieldName: "mission" }
-        ]);
+      await Promise.all(
+        map(async image => {
+          relations.values.push([
+            {
+              _typeName: "MissionExecution",
+              id: missionIds[missionNumber],
+              fieldName: "images"
+            },
+            { _typeName: "Image", id: image, fieldName: "mission" }
+          ]);
 
-        fs.writeJson(filePath, relations);
-      }, imagesToAdd);
+          await fs.writeJson(filePath, relations);
+        }, imagesToAdd)
+      );
     }, range(0, missionIds.length - 1))
   );
 }
