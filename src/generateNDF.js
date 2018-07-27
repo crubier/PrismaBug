@@ -151,10 +151,9 @@ async function generateTempRelationFiles(
             },
             { _typeName: "Image", id: image, fieldName: "mission" }
           ]);
-
-          await fs.writeJson(filePath, relations);
         }, imagesToAdd)
       );
+      await fs.writeJson(filePath, relations);
     }, range(0, missionIds.length - 1))
   );
 }
