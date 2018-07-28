@@ -10,4 +10,5 @@ type Image {
   createdAt: DateTime!
   updatedAt: DateTime!
   mission: MissionExecution @relation(name: "MissionImages")
+  metadata: String
 }
